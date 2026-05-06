@@ -1,68 +1,40 @@
 # copper-trace-metric-probe
 
-`copper-trace-metric-probe` is a Scala project for Observability. It turns package a Scala local lab for metric analysis with negative fixtures, human-readable error snapshots, and documented operating limits into a small local model with readable fixtures and a direct verification command.
-
-## Reading Copper Trace Metric Probe
-
-Start with the README, then open `metadata/project.json` to check the constants behind the examples. After that, `fixtures/cases.csv` shows the compact path and `examples/extended_cases.csv` gives a wider look at the same rule.
+`copper-trace-metric-probe` keeps a focused Scala implementation around observability. The project goal is to package a Scala local lab for metric analysis with negative fixtures, human-readable error snapshots, and documented operating limits.
 
 ## Purpose
 
-This project keeps the domain idea close to the tests. That makes it useful as a reference implementation, a small experiment, or a starting point for a more specialized tool.
+The point is to make a small domain rule concrete enough that a reader can change it and immediately see what broke.
 
-## Design Sketch
+## Copper Trace Metric Probe Review Notes
 
-The design is intentionally direct: parse or construct a signal, score it, classify it, and verify the expected branch. This makes the repository useful for studying observability behavior without needing a service or database unless the language project itself is SQL. The Scala code uses case classes and a compact object API to keep the test path direct.
+`baseline` and `stale` are the cases worth reading first. They show the optimistic and cautious ends of the fixture.
 
-## Fixture Notes
+## What Is Covered
 
-The extended cases are not random smoke tests. `degraded` keeps pressure on the review path, while `surge` shows the model when capacity and weight are strong enough to clear the threshold.
+- `fixtures/domain_review.csv` adds cases for span volume and latency skew.
+- `metadata/domain-review.json` records the same cases in structured form.
+- `config/review-profile.json` captures the read order and the two review questions.
+- `examples/copper-trace-metric-walkthrough.md` walks through the case spread.
+- The Scala code includes a review path for `span volume` and `span volume`.
+- `docs/field-notes.md` explains the strongest and weakest cases.
 
-## What It Does
+## Implementation Notes
 
-- Uses fixture data to keep log shape changes visible in code review.
-- Includes extended examples for latency summaries, including `surge` and `degraded`.
-- Documents incident slices tradeoffs in `docs/operations.md`.
-- Runs locally with a single verification command and no external credentials.
-- Stores project constants and verification metadata in `metadata/project.json`.
+The implementation keeps the scoring rule plain: reward signal and confidence, preserve slack, penalize drag, then classify the result into a review lane.
 
-## Setup
+The Scala addition stays small enough to inspect in one sitting.
 
-The only required setup is the local Scala toolchain. After cloning, stay in the repo root so fixture paths resolve correctly.
-
-## Verification
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/audit.ps1
-```
-
-The audit command checks repository structure and README constraints before it delegates to the verifier.
-
-## Files Worth Reading
-
-- `src`: primary implementation
-- `tests`: verification harness
-- `fixtures`: compact golden scenarios
-- `examples`: expanded scenario set
-- `metadata`: project constants and verification metadata
-- `docs`: operations and extension notes
-- `scripts`: local verification and audit commands
-
-## Limits
-
-The repository favors determinism over breadth. It does not pull live data, keep secrets, or depend on network access for verification.
-
-## Next Directions
-
-- Add malformed input fixtures so the failure path is as visible as the happy path.
-- Split the scoring constants into a typed configuration object and validate it before use.
-- Add a comparison mode that shows how decisions change when one signal is adjusted.
-- Add one more observability fixture that focuses on a malformed or borderline input.
-
-## Usage
+## Command
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1
 ```
 
-This runs the language-level build or test path against the compact fixture set.
+## Audit Path
+
+The same command runs the local verification path. The highest-scoring domain case is `baseline` at 211, which lands in `ship`. The most cautious case is `stale` at 113, which lands in `watch`.
+
+## Limits
+
+The repository is intentionally scoped to local checks. I would expand it by adding adversarial fixtures before adding features.
