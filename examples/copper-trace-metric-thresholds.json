@@ -1,0 +1,17 @@
+{
+  "repo": "copper-trace-metric-probe",
+  "thresholds": {
+    "signal": 2,
+    "slack": 1,
+    "confidence": 1,
+    "drag": 4,
+    "ship": 150,
+    "watch": 110
+  },
+  "terms": [
+    "span volume",
+    "latency skew",
+    "signal loss",
+    "incident shape"
+  ]
+}
